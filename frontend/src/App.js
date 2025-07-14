@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import  "./index.css"
 import { User, Plus, Search, Star, MapPin, Clock, DollarSign, Filter, Bell, Menu, X, CreditCard, Users, TrendingUp } from 'lucide-react';
 
 const HostelMarketplace = () => {
@@ -102,7 +103,7 @@ const HostelMarketplace = () => {
           </button>
           
           <div className="text-center">
-            <p className="text-gray-600">Don't have an account? <span className="text-blue-600 cursor-pointer hover:underline">Sign Up</span></p>
+            <p className="text-gray-600">Don't have an account hi? <span className="text-blue-600 cursor-pointer hover:underline">Sign Up</span></p>
           </div>
         </div>
       </div>
@@ -114,7 +115,7 @@ const HostelMarketplace = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-blue-600">TaskMate</h1>
+            <h1 className="text-2xl font-bold text-blue-600">TaskMate hey</h1>
             <span className="ml-2 text-sm text-gray-500">Hostel Marketplace</span>
           </div>
           
