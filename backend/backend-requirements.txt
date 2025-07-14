@@ -1,0 +1,13 @@
+# Run this in your backend folder:
+# Install all dependencies with one command:
+# npm install <package-names>
+
+express
+mongoose
+dotenv
+cors
+bcryptjs
+jsonwebtoken
+
+# For development (nodemon, optional)
+nodemon

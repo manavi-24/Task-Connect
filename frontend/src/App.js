@@ -1,113 +1,242 @@
-import React, { useState } from 'react';
-import  "./index.css"
-import { User, Plus, Search, Star, MapPin, Clock, DollarSign, Filter, Bell, Menu, X, CreditCard, Users, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./index.css";
+import {
+  User,
+  Search,
+  Star,
+  MapPin,
+  Clock,
+  DollarSign,
+  Bell,
+  Users,
+  TrendingUp,
+} from "lucide-react";
 
-const HostelMarketplace = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Iron 5 Shirts",
-      description: "Need my formal shirts ironed for placement interviews this week",
-      category: "Laundry",
-      price: 50,
-      duration: "30 mins",
-      location: "Room 201, Block A",
-      postedBy: "Rahul Kumar",
-      postedTime: "2 hours ago",
-      status: "open",
-      rating: 4.8
-    },
-    {
-      id: 2,
-      title: "Help with Java Assignment",
-      description: "Need help debugging my Java code for OOP assignment. Due tomorrow!",
-      category: "Academic",
-      price: 200,
-      duration: "2 hours",
-      location: "Library, 2nd Floor",
-      postedBy: "Priya Sharma",
-      postedTime: "4 hours ago",
-      status: "open",
-      rating: 4.9
-    },
-    {
-      id: 3,
-      title: "Cook Dinner for 2",
-      description: "Make simple dal-chawal and sabzi for me and my roommate",
-      category: "Cooking",
-      price: 150,
-      duration: "1 hour",
-      location: "Common Kitchen, Block B",
-      postedBy: "Amit Singh",
-      postedTime: "1 hour ago",
-      status: "open",
-      rating: 4.7
-    },
-    {
-      id: 4,
-      title: "Rent Formal Shoes Size 9",
-      description: "Need black formal shoes for interview tomorrow. Will return same day",
-      category: "Rental",
-      price: 100,
-      duration: "1 day",
-      location: "Block C, Room 305",
-      postedBy: "Neha Patel",
-      postedTime: "30 mins ago",
-      status: "open",
-      rating: 4.6
-    }
-  ]);
+const API = "http://localhost:5000/api"; // Change to your backend base path if needed
 
-  const [newTask, setNewTask] = useState({
-    title: '',
-    description: '',
-    category: 'Laundry',
-    price: '',
-    duration: '',
-    location: ''
+function AuthForm({ setUser, setToken, setIsLoggedIn }) {
+  const [mode, setMode] = useState("login");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    hostel: "",
+    room: "",
   });
+  const [error, setError] = useState("");
 
-  const categories = ['All', 'Laundry', 'Academic', 'Cooking', 'Rental', 'Cleaning', 'Shopping', 'Other'];
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const LoginForm = () => (
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const url =
+        mode === "register" ? `${API}/auth/register` : `${API}/auth/login`;
+      const { data } = await axios.post(url, form);
+      setUser(data.user);
+      setToken(data.token);
+      setIsLoggedIn(true);
+      localStorage.setItem("token", data.token);
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Error");
+    }
+  };
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
+      <form
+        className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md"
+        onSubmit={handleSubmit}
+      >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">TaskMate</h1>
           <p className="text-gray-600">Your Hostel Task Marketplace</p>
         </div>
-        
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input type="email" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="your.email@college.edu" />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input type="password" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="••••••••" />
-          </div>
-          
-          <button 
-            onClick={() => {
-              setIsLoggedIn(true);
-              setUser({ name: 'Demo User', hostel: 'Block A', room: '201' });
-              setCurrentPage('home');
-            }}
+          {mode === "register" && (
+            <>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Name"
+                className="w-full px-4 py-3 border rounded-lg"
+                required
+              />
+              <input
+                name="hostel"
+                value={form.hostel}
+                onChange={handleChange}
+                placeholder="Hostel"
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+              <input
+                name="room"
+                value={form.room}
+                onChange={handleChange}
+                placeholder="Room"
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+            </>
+          )}
+          <input
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className="w-full px-4 py-3 border rounded-lg"
+            required
+          />
+          <input
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="Password"
+            className="w-full px-4 py-3 border rounded-lg"
+            required
+          />
+          <button
+            type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            Login
+            {mode === "register" ? "Register" : "Login"}
           </button>
-          
-          <div className="text-center">
-            <p className="text-gray-600">Don't have an account hi? <span className="text-blue-600 cursor-pointer hover:underline">Sign Up</span></p>
-          </div>
+          <button
+            type="button"
+            onClick={() => setMode(mode === "login" ? "register" : "login")}
+            className="w-full text-blue-600 underline"
+          >
+            Switch to {mode === "login" ? "Register" : "Login"}
+          </button>
+          {error && <div className="text-red-600">{error}</div>}
         </div>
-      </div>
+      </form>
     </div>
+  );
+}
+
+const HostelMarketplace = () => {
+  const [currentPage, setCurrentPage] = useState("home");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState({
+    title: "",
+    description: "",
+    category: "Laundry",
+    price: "",
+    duration: "",
+    location: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const categories = [
+    "All",
+    "Laundry",
+    "Academic",
+    "Cooking",
+    "Rental",
+    "Cleaning",
+    "Shopping",
+    "Other",
+  ];
+
+  // Set axios default header for auth
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }, [token]);
+
+  // Fetch tasks from backend
+  useEffect(() => {
+    if (isLoggedIn) {
+      (async () => {
+        setLoading(true);
+        try {
+          const { data } = await axios.get(`${API}/tasks`);
+          setTasks(data);
+        } catch (err) {
+          setError(err.response?.data?.message || "Failed to fetch tasks");
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
+  }, [isLoggedIn]);
+
+  // Post a new task to backend
+  const handlePostTask = async () => {
+    if (!newTask.title || !newTask.description || !newTask.price) {
+      setError("Fill all required fields");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data } = await axios.post(`${API}/tasks/post`, {
+        ...newTask,
+        price: Number(newTask.price), // Ensure price is a number
+      });
+      setTasks([...tasks, data.task]);
+      setNewTask({
+        title: "",
+        description: "",
+        category: "Laundry",
+        price: "",
+        duration: "",
+        location: "",
+      });
+      setCurrentPage("home");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to post task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Accept task
+  const handleAcceptTask = async (taskId) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.patch(`${API}/tasks/accept/${taskId}`);
+      // Refetch all tasks so acceptedBy is always populated
+      const refreshed = await axios.get(`${API}/tasks`);
+      setTasks(refreshed.data);
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to accept task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // FIX: Use a stable handleInputChange for Post Task form (do NOT re-create function inside render)
+  const handleInputChange = React.useCallback((e) => {
+    const { name, value } = e.target;
+    setNewTask((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }, []);
+
+  // Filter tasks for "My Tasks"
+  const userId = user?._id || user?.id;
+  const myPostedTasks = tasks.filter(
+    (task) => String(task.postedBy?._id) === String(userId)
+  );
+  const myAcceptedTasks = tasks.filter(
+    (task) =>
+      task.acceptedBy &&
+      (String(task.acceptedBy._id) === String(userId) ||
+        String(task.acceptedBy) === String(userId))
   );
 
   const Header = () => (
@@ -115,38 +244,52 @@ const HostelMarketplace = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-blue-600">TaskMate hey</h1>
-            <span className="ml-2 text-sm text-gray-500">Hostel Marketplace</span>
+            <h1 className="text-2xl font-bold text-blue-600">TaskMate</h1>
+            <span className="ml-2 text-sm text-gray-500">
+              Hostel Marketplace
+            </span>
           </div>
-          
           <nav className="hidden md:flex space-x-8">
-            <button 
-              onClick={() => setCurrentPage('home')}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === 'home' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'}`}
+            <button
+              onClick={() => setCurrentPage("home")}
+              className={`px-3 py-2 rounded-md text-sm font-medium ${
+                currentPage === "home"
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
             >
               Browse Tasks
             </button>
-            <button 
-              onClick={() => setCurrentPage('post')}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === 'post' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'}`}
+            <button
+              onClick={() => setCurrentPage("post")}
+              className={`px-3 py-2 rounded-md text-sm font-medium ${
+                currentPage === "post"
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
             >
               Post Task
             </button>
-            <button 
-              onClick={() => setCurrentPage('my-tasks')}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === 'my-tasks' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600'}`}
+            <button
+              onClick={() => setCurrentPage("my-tasks")}
+              className={`px-3 py-2 rounded-md text-sm font-medium ${
+                currentPage === "my-tasks"
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
             >
               My Tasks
             </button>
           </nav>
-          
           <div className="flex items-center space-x-4">
             <Bell className="w-6 h-6 text-gray-600 cursor-pointer hover:text-blue-600" />
             <div className="flex items-center space-x-2 cursor-pointer">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
-              <span className="text-sm font-medium text-gray-700">{user?.name}</span>
+              <span className="text-sm font-medium text-gray-700">
+                {user?.name}
+              </span>
             </div>
           </div>
         </div>
@@ -158,14 +301,15 @@ const HostelMarketplace = () => {
     <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">{task.title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            {task.title}
+          </h3>
           <p className="text-gray-600 text-sm mb-3">{task.description}</p>
         </div>
         <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
           {task.category}
         </span>
       </div>
-      
       <div className="grid grid-cols-2 gap-4 mb-4 text-sm text-gray-600">
         <div className="flex items-center">
           <DollarSign className="w-4 h-4 mr-1" />
@@ -181,19 +325,32 @@ const HostelMarketplace = () => {
         </div>
         <div className="flex items-center">
           <Star className="w-4 h-4 mr-1 text-yellow-400 fill-current" />
-          <span>{task.rating}</span>
+          <span>{task.rating || 4.5}</span>
         </div>
       </div>
-      
       <div className="flex justify-between items-center">
         <div className="text-sm text-gray-500">
-          <span>by {task.postedBy}</span>
+          <span>by {task.postedBy?.name || "unknown"}</span>
           <span className="mx-2">•</span>
-          <span>{task.postedTime}</span>
+          <span>{new Date(task.createdAt).toLocaleString()}</span>
         </div>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-          Accept Task
-        </button>
+        {task.status === "open" && String(task.postedBy?._id) !== String(userId) && (
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            onClick={() => handleAcceptTask(task._id)}
+            disabled={loading}
+          >
+            Accept Task
+          </button>
+        )}
+        {task.status === "accepted" &&
+          task.acceptedBy &&
+          (String(task.acceptedBy._id) === String(userId) ||
+            String(task.acceptedBy) === String(userId)) && (
+            <span className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+              Accepted
+            </span>
+          )}
       </div>
     </div>
   );
@@ -201,131 +358,109 @@ const HostelMarketplace = () => {
   const BrowseTasks = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Available Tasks</h2>
-        
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Available Tasks
+        </h2>
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search tasks..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
             />
           </div>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+          <select className="px-4 py-2 border border-gray-300 rounded-lg">
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
           </select>
         </div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tasks.map(task => (
-          <TaskCard key={task.id} task={task} />
-        ))}
-      </div>
+      {loading ? (
+        <div>Loading tasks...</div>
+      ) : error ? (
+        <div className="text-red-600">{error}</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tasks
+            .filter((t) => t.status === "open")
+            .map((task) => (
+              <TaskCard key={task._id} task={task} />
+            ))}
+        </div>
+      )}
     </div>
   );
 
   const PostTask = () => (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Post a New Task</h2>
-        
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          Post a New Task
+        </h2>
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
-            <input 
-              type="text"
-              value={newTask.title}
-              onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="e.g., Iron 5 shirts for placement interviews"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea 
-              value={newTask.description}
-              onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Provide details about what you need done..."
-            />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select 
-                value={newTask.category}
-                onChange={(e) => setNewTask({...newTask, category: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {categories.slice(1).map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
-              <input 
-                type="number"
-                value={newTask.price}
-                onChange={(e) => setNewTask({...newTask, price: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="50"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
-              <input 
-                type="text"
-                value={newTask.duration}
-                onChange={(e) => setNewTask({...newTask, duration: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="30 mins"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-              <input 
-                type="text"
-                value={newTask.location}
-                onChange={(e) => setNewTask({...newTask, location: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Room 201, Block A"
-              />
-            </div>
-          </div>
-          
-          <button 
-            onClick={() => {
-              if (newTask.title && newTask.description && newTask.price) {
-                setTasks([...tasks, {
-                  id: tasks.length + 1,
-                  ...newTask,
-                  price: parseInt(newTask.price),
-                  postedBy: user.name,
-                  postedTime: "Just now",
-                  status: "open",
-                  rating: 4.5
-                }]);
-                setNewTask({title: '', description: '', category: 'Laundry', price: '', duration: '', location: ''});
-                setCurrentPage('home');
-              }
-            }}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          <input
+            name="title"
+            value={newTask.title}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border rounded-lg"
+            placeholder="Task Title"
+          />
+          <textarea
+            name="description"
+            value={newTask.description}
+            onChange={handleInputChange}
+            rows={4}
+            className="w-full px-4 py-3 border rounded-lg"
+            placeholder="Description"
+          />
+          <select
+            name="category"
+            value={newTask.category}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border rounded-lg"
           >
-            Post Task
+            {categories.slice(1).map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+          <input
+            name="price"
+            type="number"
+            value={newTask.price}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border rounded-lg"
+            placeholder="Price (₹)"
+          />
+          <input
+            name="duration"
+            type="text"
+            value={newTask.duration}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border rounded-lg"
+            placeholder="Duration"
+          />
+          <input
+            name="location"
+            type="text"
+            value={newTask.location}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border rounded-lg"
+            placeholder="Location"
+          />
+          <button
+            onClick={handlePostTask}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            disabled={loading}
+          >
+            {loading ? "Posting..." : "Post Task"}
           </button>
+          {error && <div className="text-red-600">{error}</div>}
         </div>
       </div>
     </div>
@@ -334,51 +469,47 @@ const HostelMarketplace = () => {
   const MyTasks = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">My Tasks</h2>
-      
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="text-center">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <TrendingUp className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800">Tasks Posted</h3>
-            <p className="text-2xl font-bold text-blue-600">3</p>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Tasks Posted
+            </h3>
+            <p className="text-2xl font-bold text-blue-600">
+              {myPostedTasks.length}
+            </p>
           </div>
-          
           <div className="text-center">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <Users className="w-6 h-6 text-green-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800">Tasks Completed</h3>
-            <p className="text-2xl font-bold text-green-600">7</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Star className="w-6 h-6 text-yellow-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-800">Rating</h3>
-            <p className="text-2xl font-bold text-yellow-600">4.8</p>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Tasks Accepted
+            </h3>
+            <p className="text-2xl font-bold text-green-600">
+              {myAcceptedTasks.length}
+            </p>
           </div>
         </div>
-        
         <div className="border-t pt-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Posted Tasks
+          </h3>
+          <div className="space-y-4 mb-8">
+            {myPostedTasks.map((task) => (
+              <TaskCard key={task._id} task={task} />
+            ))}
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Accepted Tasks
+          </h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-800">Iron 5 Shirts</p>
-                <p className="text-sm text-gray-600">Completed by Raj Kumar</p>
-              </div>
-              <span className="text-green-600 font-medium">+₹50</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-800">Cook Dinner</p>
-                <p className="text-sm text-gray-600">Completed for Priya</p>
-              </div>
-              <span className="text-green-600 font-medium">+₹150</span>
-            </div>
+            {myAcceptedTasks.map((task) => (
+              <TaskCard key={task._id} task={task} />
+            ))}
           </div>
         </div>
       </div>
@@ -386,20 +517,22 @@ const HostelMarketplace = () => {
   );
 
   if (!isLoggedIn) {
-    return <LoginForm />;
+    return (
+      <AuthForm
+        setUser={setUser}
+        setToken={setToken}
+        setIsLoggedIn={setIsLoggedIn}
+      />
+    );
   }
 
   return (
-    <>
-      
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-
-        {currentPage === "home" && <BrowseTasks />}
-        {currentPage === "post" && <PostTask />}
-        {currentPage === "my-tasks" && <MyTasks />}
-      </div>
-    </>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      {currentPage === "home" && <BrowseTasks />}
+      {currentPage === "post" && <PostTask />}
+      {currentPage === "my-tasks" && <MyTasks />}
+    </div>
   );
 };
 

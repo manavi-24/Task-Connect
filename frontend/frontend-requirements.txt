@@ -1,0 +1,11 @@
+# Run this in your frontend folder:
+# Install all dependencies with one command:
+# npm install <package-names>
+
+axios
+lucide-react
+
+# For styling (Tailwind CSS, PostCSS, Autoprefixer)
+tailwindcss
+postcss
+autoprefixer

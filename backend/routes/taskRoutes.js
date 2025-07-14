@@ -8,9 +8,8 @@ const {
   acceptTask
 } = require('../controllers/taskController');
 
-// 👇 THESE MUST MATCH EXACTLY with functions exported above
-router.post('/post', auth, postTask);
+router.post('/post', auth, postTask); // <-- must use auth
 router.get('/', getAllTasks);
-router.patch('/accept/:id', auth, acceptTask);
+router.patch('/accept/:id', auth, acceptTask); // <-- must use auth
 
 module.exports = router;
