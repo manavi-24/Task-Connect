@@ -65,10 +65,11 @@ TaskMate is just getting started! Planned/future improvements include:
 ## 📸 Screenshots
 
 <img width="1919" height="944" alt="Screenshot 2025-07-16 001646" src="https://github.com/user-attachments/assets/e962510d-bca7-4df8-8efd-7549773099d5" />
-<img width="1919" height="949" alt="Screenshot 2025-07-16 001503" src="https://github.com/user-attachments/assets/0427674d-9316-4b7b-812a-07e2df82b225" />
-<img width="1915" height="945" alt="Screenshot 2025-07-16 001513" src="https://github.com/user-attachments/assets/45e4bfd3-30e8-4ea5-a45c-082356c9b9e5" />
-<img width="1915" height="950" alt="Screenshot 2025-07-16 001549" src="https://github.com/user-attachments/assets/e871da07-4c3a-4904-a170-a9da850ef9da" />
-<img width="1919" height="954" alt="Screenshot 2025-07-16 001559" src="https://github.com/user-attachments/assets/a4f0eed3-8475-4471-a0ac-0d9d3e9b77b7" />
+<img width="1919" height="949" alt="Screenshot 2025-07-16 013805" src="https://github.com/user-attachments/assets/45f79e89-e77d-475f-9737-47b996b9aad7" />
+<img width="1919" height="939" alt="Screenshot 2025-07-16 013817" src="https://github.com/user-attachments/assets/18046081-6bba-4a31-8947-67adcdaacade" />
+<img width="1919" height="942" alt="Screenshot 2025-07-16 013954" src="https://github.com/user-attachments/assets/32373017-c943-4ee5-8d44-7908231a8e04" />
+<img width="1919" height="954" alt="Screenshot 2025-07-16 014011" src="https://github.com/user-attachments/assets/eeddc880-3156-4d39-a57d-cc5144fc22e9" />
+
 
 
 ---
